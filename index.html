@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">				
+		
+		<link type="text/css" rel="stylesheet" href="mainn.css"/>		
+		
+		<script type="text/javascript" src="jquery-1.4.4.min.js"></script>
+		<script type="text/javascript" src="json2.js"></script>
+		
+		<script type="text/javascript">
+var notes;
+var count = 0;
+var i=2;
+
+function addNoteEvent(noteElement) {
+    var div = noteElement.children("div");
+    var img = div.find("img");
+
+    div.focus(function () {
+        img.removeClass("hide");
+    });
+
+    div.children().focus(function () {
+        img.removeClass("hide");
+    });
+
+    div.hover(function () {
+        img.removeClass("hide");
+    }, function () {
+        img.addClass("hide");
+    });
+
+    div.children().hover(function () {
+        img.removeClass("visible");
+    }, function () {
+        img.addClass("visible");
+    });
+}
+			
+function newNote(className, title, content) {
+	if (!className) {
+		className = "colour" + Math.ceil(Math.random() * 3);
+	}
+				
+	notes.append("<li><div class='" + className + "'>" + 
+					"<textarea class='title' placeholder='title' maxlength='10'/>" + 
+					"<textarea class='content' placeholder='Your Note ;)'/>" + 
+					"<img class='hide' src='w.png'/>" + 
+					"</div></li>");
+				
+	var newnote = notes.find("li:last");
+	newnote.find("img").click(function () {
+        	    i--;
+        	    newnote.remove();
+	});
+				
+	addNoteEvent(newnote);
+				
+	if (title) {
+		newnote.find("textarea.title").val(title);
+    }
+
+if (content) {
+newnote.find("textarea.content").val(content);
+}
+}
+
+function loadNotes() {
+    var storedNotes = localStorage.getItem("notes");
+    if (storedNotes) {
+        var notesArray = JSON.parse(storedNotes);
+        count = notesArray.length;
+
+        var i;
+        for (i = 0; i < count; i++) {
+            var storedNote = notesArray[i];
+            newNote(storedNote.Class, storedNote.Title, storedNote.Content);
+        }
+    }
+}
+
+$(document).ready(function () {
+    notes = $("#notes");
+    loadNotes();
+
+    $("#newnote").click(function () {
+    
+    if(i<20){
+        newNote();
+        }
+        i++;
+    });
+    if (count === 0) {
+        $("#newnote").click();
+    }
+});
+		</script>
+		
+		
+	</head>
+	
+	<body>
+	
+		<div id="add">
+			<img id="newnote" src="v.png"/>
+		</div>
+		<div style="width:1120px;height:800px;margin-left:30px">
+		<ul id="notes"/>      
+		</div>  
+	</body>
+</html>
